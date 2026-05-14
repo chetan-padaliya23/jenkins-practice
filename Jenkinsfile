@@ -4,6 +4,7 @@ pipeline {
     environment {
         DEVELOPER = "Chetan Padaliya"
         APP_NAME = "Jenkins GitHub Project"
+        VERSION = "2.0"
     }
     
     stages {
@@ -12,6 +13,7 @@ pipeline {
             steps {
                 echo "Code GitHub se aaya!"
                 echo "Developer: ${DEVELOPER}"
+                echo "Version: ${VERSION}"
             }
         }
         
@@ -31,7 +33,7 @@ pipeline {
         
         stage('Deploy') {
             steps {
-                echo "${APP_NAME} deploy ho gaya!"
+                echo "${APP_NAME} v${VERSION} deploy ho gaya!"
             }
         }
         
@@ -39,10 +41,10 @@ pipeline {
     
     post {
         success {
-            echo "✅ GitHub se pipeline SUCCESS!"
+            echo "✅ VSCode se likha, GitHub pe push kiya, Jenkins ne run kiya!"
         }
         failure {
-            echo "❌ Kuch gadbad hai, dekho!"
+            echo "❌ Kuch gadbad hai!"
         }
     }
 }
