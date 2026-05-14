@@ -4,7 +4,7 @@ pipeline {
     environment {
         DEVELOPER = "Chetan Padaliya"
         APP_NAME = "Jenkins GitHub Project"
-        VERSION = "2.0"
+        VERSION = "3.0"
     }
     
     stages {
