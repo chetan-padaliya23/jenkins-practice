@@ -3,15 +3,16 @@ pipeline {
     
     environment {
         DEVELOPER = "Chetan Padaliya"
-        APP_NAME = "Jenkins GitHub Project"
-        VERSION = "4.0"
+        APP_NAME = "Jenkins Credentials Project"
+        VERSION = "5.0"
+        DB_PASS = credentials('db-password')
+        MY_API  = credentials('api-key')
     }
     
     stages {
         
         stage('Checkout') {
             steps {
-                echo "Code GitHub se aaya!"
                 echo "Developer: ${DEVELOPER}"
                 echo "Version: ${VERSION}"
             }
@@ -20,13 +21,16 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Build ho raha hai..."
-                echo "Code compile hua!"
+                echo "Database connect ho raha hai..."
+                echo "DB Password hai: ${DB_PASS}"
+                echo "Build complete!"
             }
         }
         
         stage('Test') {
             steps {
-                echo "Tests run ho rahe hain..."
+                echo "API se connect ho raha hai..."
+                echo "API Key hai: ${MY_API}"
                 echo "Sab tests pass!"
             }
         }
@@ -41,7 +45,7 @@ pipeline {
     
     post {
         success {
-            echo "✅ VSCode se likha, GitHub pe push kiya, Jenkins ne run kiya!"
+            echo "✅ Credentials safely use hue!"
         }
         failure {
             echo "❌ Kuch gadbad hai!"
