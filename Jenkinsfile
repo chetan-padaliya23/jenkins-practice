@@ -4,7 +4,7 @@ pipeline {
     environment {
         DEVELOPER = "Chetan Padaliya"
         APP_NAME = "Chetan Ka Calculator"
-        PYTHON = "python"
+        PYTHON = "\"C:\\Program Files\\Python312\\python.exe\""
     }
     
     stages {
@@ -22,7 +22,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo "Dependencies install ho rahi hain..."
-                bat "pip install -r requirements.txt"
+                bat "${PYTHON} -m pip install -r requirements.txt"
                 echo "Dependencies install ho gayi!"
             }
         }
@@ -30,7 +30,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo "Tests run ho rahe hain..."
-                bat "python test_app.py"
+                bat "${PYTHON} test_app.py"
                 echo "Saare tests pass ho gaye!"
             }
         }
@@ -38,7 +38,7 @@ pipeline {
         stage('Run App') {
             steps {
                 echo "App run ho rahi hai..."
-                bat "python app.py"
+                bat "${PYTHON} app.py"
             }
         }
         
