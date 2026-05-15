@@ -46,7 +46,7 @@ pipeline {
             steps {
                 echo "========================================="
                 echo "${APP_NAME} successfully deploy hua!"
-                echo "Yeh production ready hai!"
+                echo "Production ready hai!"
                 echo "========================================="
             }
         }
@@ -55,11 +55,11 @@ pipeline {
     
     post {
         success {
-            echo "✅ ${APP_NAME} - Pipeline SUCCESS!"
-            echo "Chetan bhai ne real project deploy kiya! 🚀"
+            echo "SUCCESS! ${APP_NAME} - Pipeline complete!"
+            echo "Chetan bhai ne real project deploy kiya!"
         }
         failure {
-            echo "❌ Pipeline fail hui - Check karo!"
+            echo "FAILED! Pipeline fail hui - Check karo!"
         }
         always {
             echo "Build complete: ${currentBuild.result}"
