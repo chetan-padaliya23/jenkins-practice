@@ -1,12 +1,27 @@
 pipeline {
     agent any
     
+    parameters {
+        string(
+            name: 'VERSION',
+            defaultValue: '1.0',
+            description: 'Kaunsa version deploy karna hai?'
+        )
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['Development', 'Staging', 'Production'],
+            description: 'Kahan deploy karna hai?'
+        )
+        booleanParam(
+            name: 'RUN_TESTS',
+            defaultValue: true,
+            description: 'Tests run karne hain?'
+        )
+    }
+    
     environment {
         DEVELOPER = "Chetan Padaliya"
-        APP_NAME = "Jenkins Credentials Project"
-        VERSION = "5.0"
-        DB_PASS = credentials('db-password')
-        MY_API  = credentials('api-key')
+        APP_NAME = "Jenkins Parameters Project"
     }
     
     stages {
@@ -14,30 +29,41 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo "Developer: ${DEVELOPER}"
-                echo "Version: ${VERSION}"
+                echo "Version: ${params.VERSION}"
+                echo "Environment: ${params.ENVIRONMENT}"
+                echo "Tests chalenge: ${params.RUN_TESTS}"
             }
         }
         
         stage('Build') {
             steps {
-                echo "Build ho raha hai..."
-                echo "Database connect ho raha hai..."
-                echo "DB Password hai: ${DB_PASS}"
+                echo "Building version ${params.VERSION}..."
                 echo "Build complete!"
             }
         }
         
         stage('Test') {
+            when {
+                expression { params.RUN_TESTS == true }
+            }
             steps {
-                echo "API se connect ho raha hai..."
-                echo "API Key hai: ${MY_API}"
+                echo "Tests run ho rahe hain..."
                 echo "Sab tests pass!"
             }
         }
         
         stage('Deploy') {
             steps {
-                echo "${APP_NAME} v${VERSION} deploy ho gaya!"
+                echo "Deploying ${APP_NAME}..."
+                echo "Version ${params.VERSION} → ${params.ENVIRONMENT}"
+                
+                script {
+                    if (params.ENVIRONMENT == 'Production') {
+                        echo "⚠️ PRODUCTION PE DEPLOY HO RAHA HAI!"
+                    } else {
+                        echo "✅ ${params.ENVIRONMENT} pe deploy hua!"
+                    }
+                }
             }
         }
         
@@ -45,10 +71,10 @@ pipeline {
     
     post {
         success {
-            echo "✅ Credentials safely use hue!"
+            echo "✅ ${APP_NAME} v${params.VERSION} → ${params.ENVIRONMENT} SUCCESS!"
         }
         failure {
-            echo "❌ Kuch gadbad hai!"
+            echo "❌ Deploy fail hua!"
         }
     }
 }
