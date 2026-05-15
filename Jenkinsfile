@@ -1,76 +1,53 @@
 pipeline {
     agent any
     
-    parameters {
-        choice(
-            name: 'ENVIRONMENT',
-            choices: ['Development', 'Staging', 'Production'],
-            description: 'Kahan deploy karna hai?'
-        )
-        booleanParam(
-            name: 'SIMULATE_FAILURE',
-            defaultValue: false,
-            description: 'Failure test karni hai?'
-        )
-    }
-    
     environment {
         DEVELOPER = "Chetan Padaliya"
-        APP_NAME = "Jenkins Error Handling"
+        APP_NAME = "Chetan Ka Calculator"
+        PYTHON = "python"
     }
     
     stages {
         
         stage('Checkout') {
             steps {
+                echo "========================================="
+                echo "Code GitHub se aa raha hai..."
                 echo "Developer: ${DEVELOPER}"
-                echo "Environment: ${params.ENVIRONMENT}"
+                echo "App: ${APP_NAME}"
+                echo "========================================="
             }
         }
         
-        stage('Build') {
+        stage('Install Dependencies') {
             steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    echo "Build shuru..."
-                    echo "Build complete!"
-                }
+                echo "Dependencies install ho rahi hain..."
+                bat "pip install -r requirements.txt"
+                echo "Dependencies install ho gayi!"
             }
         }
         
-        stage('Test') {
+        stage('Run Tests') {
             steps {
-                retry(3) {
-                    echo "Tests run ho rahe hain..."
-                    
-                    script {
-                        if (params.SIMULATE_FAILURE) {
-                            error "TEST FAIL! Simulate kiya!"
-                        }
-                    }
-                    
-                    echo "Sab tests pass!"
-                }
+                echo "Tests run ho rahe hain..."
+                bat "python test_app.py"
+                echo "Saare tests pass ho gaye!"
+            }
+        }
+        
+        stage('Run App') {
+            steps {
+                echo "App run ho rahi hai..."
+                bat "python app.py"
             }
         }
         
         stage('Deploy') {
             steps {
-                script {
-                    try {
-                        echo "Deploy ho raha hai..."
-                        
-                        if (params.ENVIRONMENT == 'Production') {
-                            echo "⚠️ Production deploy - extra check!"
-                        }
-                        
-                        echo "Deploy successful!"
-                        
-                    } catch (Exception e) {
-                        echo "❌ Deploy fail hua: ${e.getMessage()}"
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
-                }
+                echo "========================================="
+                echo "${APP_NAME} successfully deploy hua!"
+                echo "Yeh production ready hai!"
+                echo "========================================="
             }
         }
         
@@ -78,14 +55,14 @@ pipeline {
     
     post {
         success {
-            echo "✅ ${APP_NAME} → ${params.ENVIRONMENT} SUCCESS!"
+            echo "✅ ${APP_NAME} - Pipeline SUCCESS!"
+            echo "Chetan bhai ne real project deploy kiya! 🚀"
         }
         failure {
-            echo "❌ PIPELINE FAIL! Team ko batao!"
-            echo "Developer: ${DEVELOPER} check karo!"
+            echo "❌ Pipeline fail hui - Check karo!"
         }
         always {
-            echo "Pipeline khatam - Result: ${currentBuild.result}"
+            echo "Build complete: ${currentBuild.result}"
         }
     }
 }
